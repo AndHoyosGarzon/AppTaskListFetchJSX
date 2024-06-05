@@ -1,9 +1,8 @@
 //POST CREATE USER
 const postCreateUser = async () => {
-  const url = `https://playground.4geeks.com/todo/users/${"andresh"}`;
+  const url = `https://playground.4geeks.com/todo/users/andresh`;
   await fetch(url, {
     method: "POST",
-    headers: { "Content-type": "application/json" },
   })
     .then((res) => {
       if (!res.ok) console.log(res.statusText);
@@ -53,25 +52,6 @@ export const postTaskFetch = async (task) => {
     .catch((error) => console.log("el error es", error));
 };
 
-//DELETE TASKS
-/* export const deleteTaskFetch = async () => {
-  const url = `https://playground.4geeks.com/todo/users/`;
-  await fetch(
-    url   {
-    method: "DELETE",
-    headers: { "Content-type": "application/json" },
-  } 
-  )
-    .then((res) => {
-      if (!res.ok) throw Error(res.statusTex);
-      return res.json();
-    })
-    .then((data) => {
-      console.log(data.users.name);
-    })
-    .catch((error) => console.log(error));
-};
- */
 //DELETE USER
 export const deleteUserFetch = async () => {
   const url = "https://playground.4geeks.com/todo/users/andresh";
@@ -81,11 +61,12 @@ export const deleteUserFetch = async () => {
     headers: { "Content-type": "application/json" },
   })
     .then((res) => {
-      if (res.statusText === "Not Found") {
-        console.log("usuario delete");
+      if (res.ok) {
+        alert("usuario delete");
       }
-      return res.json();
     })
-    .then((data) => console.log(data.status))
+    .then((data) => console.log(data))
     .catch((error) => console.log(error));
 };
+
+///delete task

@@ -12,6 +12,15 @@ function List() {
 
   useEffect(() => {
     getFetch();
+    const retrieveTasks = async () => {
+      await fetch("https://playground.4geeks.com/todo/users/andresh")
+        .then((response) => response.json())
+        .then((data) => {
+          setTaskList(data.todos);
+        })
+        .catch((error) => console.error("Error retrieving tasks:", error));
+    };
+    retrieveTasks();
   }, []);
 
   const handlePressKey = (e) => {
@@ -27,17 +36,24 @@ function List() {
     }
   };
 
-  const handleDelete = (idx) => {
-    setTaskList(
-      taskList.filter((task, i) => {
-        return i !== idx;
-      })
-    );
-  };
-
   const handleBtnUserClear = () => {
     setClear(!clear);
     deleteUserFetch();
+  };
+
+  //delete task
+  const handleDeleteTask = (id) => {
+    fetch(`https://playground.4geeks.com/todo/todos/${id}`, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        if (response.ok) {
+          setTaskList(taskList.filter((task) => task.id !== id));
+        } else {
+          console.error("Error deleting task:", response.statusText);
+        }
+      })
+      .catch((error) => console.error("Error deleting task:", error));
   };
 
   return (
@@ -59,9 +75,12 @@ function List() {
         {taskList.map((el, idx) => {
           return (
             <li key={idx} className="list-group-item">
-              {el.toUpperCase()}
+              {el.label}
               <span className="ms-3 ">
-                <IoTrashBin onClick={() => handleDelete(idx)} color="darkred" />
+                <IoTrashBin
+                  onClick={() => handleDeleteTask(el.id)}
+                  color="darkred"
+                />
               </span>
             </li>
           );
