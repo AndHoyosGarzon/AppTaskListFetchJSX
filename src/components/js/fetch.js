@@ -1,11 +1,13 @@
 //POST CREATE USER
-const postCreateUser = async () => {
-  const url = `https://playground.4geeks.com/todo/users/andresh`;
+export const postCreateUser = async () => {
+  const url = "https://playground.4geeks.com/todo/users/andresh";
   await fetch(url, {
     method: "POST",
   })
     .then((res) => {
-      if (!res.ok) console.log(res.statusText);
+      if (res.ok) {
+        console.log("usuario existe");
+      }
       return res.json();
     })
     .then((data) => console.log(data))
@@ -13,18 +15,18 @@ const postCreateUser = async () => {
 };
 
 //GET
-export const getFetch = async () => {
+/* export const getFetch = async (setTaskList) => {
   const url = "https://playground.4geeks.com/todo/users/andresh";
   await fetch(url)
     .then((res) => {
-      if (res.statusText === "Not Found") {
-        postCreateUser();
+      if (!res.ok ) {
+        console.log("hay un error desde funcion GET");
       }
       return res.json();
     })
-    .then((data) => console.log("loggedUser:", data.name))
-    .catch((error) => error);
-};
+    .then((data) =>  setTaskList(data.todos))
+    .catch((error) => console.log(error));
+}; */
 
 //POST CREATE TASK
 export const postTaskFetch = async (task) => {
@@ -42,12 +44,7 @@ export const postTaskFetch = async (task) => {
       return res.json();
     })
     .then((data) => {
-      for (let prop in data) {
-        if (prop.label !== "") {
-          let str = data.label;
-          console.log("New Task: ", str);
-        }
-      }
+      console.log(`La tarea es: ${data.label}`);
     })
     .catch((error) => console.log("el error es", error));
 };
@@ -68,5 +65,3 @@ export const deleteUserFetch = async () => {
     .then((data) => console.log(data))
     .catch((error) => console.log(error));
 };
-
-///delete task

@@ -1,27 +1,36 @@
 import { useEffect, useState } from "react";
 import { IoTrashBin } from "react-icons/io5";
 import { FaUserMinus } from "react-icons/fa";
-import { FaCheck } from "react-icons/fa";
 import { IoBookOutline } from "react-icons/io5";
-import { getFetch, postTaskFetch, deleteUserFetch } from "../js/fetch";
+import { postTaskFetch, deleteUserFetch, postCreateUser } from "../js/fetch";
 
 function List() {
   const [clear, setClear] = useState(true);
   const [task, setTask] = useState("");
   const [taskList, setTaskList] = useState([]);
 
-  useEffect(() => {
-    getFetch();
-    const retrieveTasks = async () => {
-      await fetch("https://playground.4geeks.com/todo/users/andresh")
-        .then((response) => response.json())
-        .then((data) => {
+  const retrieveTasks = async () => {
+    await fetch("https://playground.4geeks.com/todo/users/andresh")
+      .then((res) => {
+        if (!res.ok && res.statusText == "Not Found") {
+          postCreateUser();
+          console.log("llamamos a la funcion que creadora");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (data.todos === undefined) {
+          console.log(data.name);
+        } else if (data.todos) {
           setTaskList(data.todos);
-        })
-        .catch((error) => console.error("Error retrieving tasks:", error));
-    };
+        }
+      })
+      .catch((error) => console.log(`El error desde catch: ${error}`));
+  };
+
+  useEffect(() => {
     retrieveTasks();
-  }, []);
+  }, [task]);
 
   const handlePressKey = (e) => {
     if (task === "" && e.key === "Enter") {
@@ -39,6 +48,7 @@ function List() {
   const handleBtnUserClear = () => {
     setClear(!clear);
     deleteUserFetch();
+    setTaskList([]);
   };
 
   //delete task
@@ -67,7 +77,9 @@ function List() {
           className="text-center fw-bolder p-2 border-0 rounded bg-primary bg-opacity-10"
           type="text"
           placeholder={
-            taskList.length < 1 ? "Add your first task" : "one more task"
+            taskList && taskList.length < 1
+              ? "Add your first task"
+              : "one more task"
           }
         />
       </div>
@@ -86,7 +98,7 @@ function List() {
           );
         })}
         <p className="text-start text-secondary mt-5">
-          {taskList.length < 1
+          {taskList && taskList.length < 1
             ? "No tiene tareas"
             : `${taskList.length} Tareas pendientes`}
           <span className="ms-3 fs-5">
@@ -95,16 +107,15 @@ function List() {
         </p>
       </ul>
       <div className="my-4">
-        {taskList.length < 1 ? (
+        {taskList && taskList.length < 1 ? (
           ""
         ) : (
           <button
-            className={`px-3 btn btn-${
-              clear ? "warning" : "danger"
-            } border-dark`}
+            className={`px-3 btn btn-warning border-dark`}
             onClick={handleBtnUserClear}
           >
-            {clear ? <FaUserMinus /> : <FaCheck />}
+            {clear ? "Delete User" : ""}
+            {clear ? <FaUserMinus /> : <FaUserMinus />}
           </button>
         )}
       </div>
